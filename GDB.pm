@@ -3,7 +3,7 @@
 ##						##
 ##	Gdb - open and manipulate gdb process	##
 ##						##
-##	Version 1.0				##
+##	Version 1.1				##
 ##						##
 ##						##
 ##	Josef Ezra     				##
@@ -17,20 +17,22 @@
 
 =head1 NAME
 
-    Devel::GDB - open and communicate a gdb session, Version 1.0
+    Devel::GDB - open and communicate a gdb session, Version 1.1
 
 =head1 SYNOPSIS
 
     use Devel::GDB ;
 
-    $gdb = new Devel::GDB (?options?) ;
+    $gdb = new Devel::GDB (-file => 'a.out' ) ;
+
+    $gdb -> get ( 'break main' ) ; 
 
 =head1	DESCRIPTION 
 
-    Devel::GDB is an Expect like module, designed to communicate with gdb.
-    It is using IPC::Open3 to open gdb process, send commands and return responses,
-    and was designed to provide max flexibility for both interactive and automatic
-    scripts. 
+Devel::GDB is an Expect like module, designed to communicate with
+gdb. It is opening a gdb process, sending commands and returning 
+the responses. Devel::GDB was designed to provide good base for 
+both interactive and automatic scripts.
 
 =over 2
 
@@ -38,14 +40,12 @@
 
 =over 4
 
-=item
-
 use Devel::GDB ; 
 
-our $gdb = new Devel::Gdb (-execfile => 'gdb',
-                           ) ; 
+our $gdb = new Devel::Gdb (-execfile => 'gdb') ; 
 
 my $arch   = $gdb -> get ( 'info arch'  ) ; 
+
 my $endian = $gdb -> get ( 'show endian' ) ;
 
 print $arch, $endian ;
@@ -56,118 +56,119 @@ print $arch, $endian ;
 
 =head1 METHODS
 
-The three methods for gdb usage are: 'new', 'get' and 'signal'. 
+The three methods for normal gdb usage are: 'new', 'get' and 'signal'. 
 
 =over 4
 
+=head2 new
+
 =item $gdb = Devel::GDB -> new (?options?)
 
-This function opens gdb process, send it some initialize commands and returns
-the object associated with it. 
+This function opens and initializes the gdb object.
 
-=head2 Options
+B<Options:>
 
 =over 2
 
 =item -file 
 
-File to open (like 'a.out'). No default. This is an easy way to try loading
-the target file during initialization.
+File to open (like 'a.out'). No default. This is an easy way to load 
+target file during initialization.
 
 =item -execfile
 
-File to execute as a gdb process. Default is 'gdb'. 
+File or command to execute as gdb process. Default is 'gdb'. 
 
 =item -params
 
-Parameters to -execfile. Default is " -q -nx -nw ". 
-Note that parameters can be also set as part of the -execfile string. 
+Parameters to the 'execfile'. Default is " -q -nx -nw ".
+Parameters can be also set as part of the 'execfile' string. 
 
 =item -timeout 
 
-Default timeout in get method, to limit waiting for gdb response. 
-Default is 9999 ; 
+Default timeout for L<get> method. Default is 9999 ; 
 
 =item -prompt
 
-Default prompt in get method, identify the prompt in the end of the response. 
-Deafult is qr/\(s?gdb.*\)|^\s*\>|(y or n)/s . 
+Default prompt for L<get> method (to identify end of gdb response). 
+Deafult is qr/\(s?gdb.*\)|^\s*\>|(y or n)/s.
 
--item -notyet
+=item -notyet
 
-Default function in get method, to be executed every second while waiting for gdb response 
-(how about Tk update?). If the function returns non false, stop waiting (in those
-cases, gdb keeps running, so it might be a good idea to signal it).
+Default code to be used at the L<get> method while waiting for gdb response. 
 
 =item -alldone
 
-Default function in get method, to be executed when done. 
+Default code to be used at the L<get> method after waiting for gdb response. 
 
 =back 
 
-Note that one can use the method new_shell to get the same as the new method,
- but without setting defaults and running initial commands. This (actualy 
-internal) method can be used to open and manipulate any kind of prompting
-shell. Well, any kind of B<flushing> prompting shell (see open3 documentation). 
+The (actually internal) method B<new_shell> can be used to open and manipulate
+ any kind of flushing && prompting process. Unlike B<new>, it would not set
+ defaults or run initial commands. Have I mentioned B<flushing>??!!
+
+=head2 get
 
 =item $gdb -> get ( ?command?, ?timeout?, ?prompt?, ?notyet?, ?alldone? )
 
-This method will send the command to gdb and return the response. In array
-contest, get will return (response, error, actual prompt). In scalar contest
-it will return the response only (errors will be saved in $gdb->{'last_error'}).
+Send command to gdb and return response. 
+In array contest, return response, error, and matching prompt. 
+In scalar contest, return response only ('' if error). 
 
-=head2 Parameters: 
+B<Parameters:> 
 
 =over 2
 
 =item command
 
-Command to be sent to gdb. If command match /^\s*$/, get will clear and return 
-the gdb output and error buffers B<without> sending any command to gdb. 
-Default is '' (just clears the buffer). 
+Command to be sent to gdb. If undef or white-spaces, gdb buffers will be cleared
+ and returned (timeouted old responses?). 
 
 =item timeout 
 
-Limit the waiting time for gdb (in round seconds). If timeout expires, get returns
-without interrupting the gdb proccess. 
-    Default is $gdb->{timeout}
+Limit the waiting time for gdb (integer seconds). If timeout expires, get returns 
+without interrupting the gdb process (use L<signal> for that). 
+The default timeout (9999) can be overwritten in L<new>.
 
 =item prompt 
 
-Return the response when this prompt matchs the end of it. (Expect like). 
-    Default is $gdb->{prompt}
-
+Expected regexpr prompt at the end of gdb response. 
+The default prompt (qr/\(s?gdb.*\)|^\s*\>|(y or n)/s) can be overwritten in L<new>.
 
 =item notyet
 
-Code to be executed every second while waiting for response (see above). 
-    Default is $gdb->{notyet} (if exists). 
+Code to be executed every second while waiting for response. Only valid code will be
+ executed (i.e. ref $code eq 'CODE'). If this code returns true, B<get> would stop 
+waiting to gdb response. Then L<signal> can be used to interrupt gdb process.
+Default notyet code can be set in L<new>.
 
 =item alldone
 
-Code to be executed when done (see above). 
-    Default is $gdb->{alldone} (if exists). 
+Code to be executed when done. Only valid code will be executed. 
+Default alldone code can be set in L<new>. 
 
 =back 
 
+=head2 signal
+
 =item $gdb -> signal(?signum?)
 
-Send a signal to gdb. Default signum is 0. 
-Note that althogh signal 0 (SIGHUP) is the right way to interrupt gdb commands,
-other unix programs will probably ignore this signal. 
+Send a signal to the gdb process. Default signum is 0 (functions as
+Control-c in gdb command prompt)
 
 =back
+
+=head1 AUTHOR
+
+Josef Ezra E<lt>jezra@emc.comE<gt>
+
+=head1 SEE ALSO
+
+B<IPC::Open3>
 
 =cut
 
 
-
-##################################################################
-# 
-# Philosophy: 
-#  laziness, hubris, impatient (and simplify when posible)
-# 
-##################################################################
 
 package Devel::GDB ; 
 
@@ -180,7 +181,7 @@ use integer ;
 use FileHandle ;
 use IPC::Open3 ;
 
-our $VERSION = 1.0 ; 
+our $VERSION = 1.1 ; 
 
 sub new { 
 #  ------------------------------------------------------------------
@@ -231,7 +232,7 @@ sub new {
 sub new_shell {
 
 #  ------------------------------------------------------------------
-#  this function reuturns object associated with a piped system command.
+#  this function returns object associated with a piped system command.
 #  ------------------------------------------------------------------
 
     my $class = shift or 
@@ -259,16 +260,11 @@ sub new_shell {
     bless \%sgdb, $class ;
 }
 
-##################################################################
-# 
-# NOTE:
-#      this part if  modal should be 'stupid'! any meanings and regexpr
-#      of gdb (or whatever this object is running) must be parsed
-#      in upper layers. 
-#
-##################################################################
-
 sub get { 
+
+#  ------------------------------------------------------------------
+#  this function send command and return response for Devel::GDB object
+#  ------------------------------------------------------------------
 
     # get params:
     #      self                      : this (initialized) object 
@@ -278,11 +274,7 @@ sub get {
     #      wait_sub |$self->{notyet} : sub executed every second while wating
     #      done_sub |$self->{alldone}: sub executed when finished
     # 
-    # this function is a combination of get_stream and put_stream. 
-    # 
-    # usage : $s = new SgdbExt ......
-    #       : ($data, $error) = get $s "command to steam", $timeout_number
-    # 
+
     my $self = shift or die "Internal: Hey! this is a structured module, do not mess it" ;
 
     my $cmd  = shift || '' ;
@@ -367,7 +359,7 @@ sub get {
             ($err || '') ,
             ($rprompt || '')) if wantarray() ;
 
-    $self->{'last_error'} = $err ;
+    $self->{'last_Error'} = $err ;
     return $buffer ;
 }
 
@@ -515,5 +507,6 @@ sub destroy {
 sub DESTROY { destroy @_ } 
     
 'END';
+
 
 

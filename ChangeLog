@@ -4,6 +4,9 @@ Revision history for Perl extension Devel::GDB.
 	- original version; created by h2xs 1.21 with options
 		-X -n Devel::GDB
 
-1.0   Mon Oct 15 14:30    2001
-	- modified By jezra <jezra@emc.com> as part of creation
+1.0   Mon Oct 15 14:30    2001 jezra <jezra@emc.com>
+	- modified as part of creation
+
+1.1   Thu Oct 18 10:42    2001 jezra <jezra@emc.com>
+	- more exmaples and documentation
 

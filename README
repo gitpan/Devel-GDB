@@ -7,7 +7,8 @@ use Devel::GDB ;
 
 $gdb  = new Devel::GDB (?options?) ;
 
-$arch = $gdb -> get ( 'help' ) ; 
+$gdb_help = $gdb -> get ( 'help' ) ; 
+$gdb_vers = $gdb -> get ( 'show version' ) ; 
 
 INSTALLATION
 
@@ -18,11 +19,8 @@ To install this module type the following:
    make test
    make install
 
-DEPENDENCIES
 
-This module requires these other modules and libraries:
 
-IPC::Open3 (standard perl)
 
 COPYRIGHT AND LICENCE
 
@@ -49,5 +47,5 @@ up to date, or suitable for any particular purpose whatsoever.
 The authors accept no liability in respect of this information 
 or its use. 
 
-have fun - josef ezra <jezra@emc.com> 
+
 
