@@ -1,0 +1,53 @@
+Devel/GDB version 1.0
+======================
+
+Devel::GDB - open and communicate a gdb session 
+
+use Devel::GDB ;
+
+$gdb  = new Devel::GDB (?options?) ;
+
+$arch = $gdb -> get ( 'help' ) ; 
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+IPC::Open3 (standard perl)
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2001 EMC Corporation.  All rights reserved.
+
+Bundled Distributions
+This work may be distributed only under the terms of 
+Perl's Artistic License. Any distribution of this file 
+or derivatives thereof outside of it's orginal package
+require that special arrangements be made with copyright
+holder. 
+
+Irrespective of its distribution, all code examples in
+these files are hereby placed into the public domain. You
+are permitted and encouraged to use this code in your own 
+programs for fun or for profit as you see fit. A simple 
+comment in the code giving credit would be courteous but 
+is not required. 
+
+Disclaimer
+This information is offered in good faith and in the hope 
+that it may be of use, but is not guaranteed to be correct, 
+up to date, or suitable for any particular purpose whatsoever. 
+The authors accept no liability in respect of this information 
+or its use. 
+
+have fun - josef ezra <jezra@emc.com> 
+
