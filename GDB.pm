@@ -5,8 +5,7 @@
 ##						##
 ##	Josef Ezra     				##
 ##	EMC                                     ##
-##	jezra@emc.com           		##
-##	jezra@newmail.net			##
+##	jezra@cpan.org  			##
 ##						##
 ##################################################
 ##################################################
@@ -22,13 +21,13 @@
 
     $gdb = new Devel::GDB (-file => 'a.out' ) ;
 
-    $gdb -> get ( 'break main' ) ; 
+    $gdb -> get ( 'break main' ) ;
 
-=head1	DESCRIPTION 
+=head1	DESCRIPTION
 
 Devel::GDB is an Expect like module, designed to communicate with
-gdb. It is opening a gdb process, sending commands and returning 
-the responses. Devel::GDB was designed to provide good base for 
+gdb. It is opening a gdb process, sending commands and returning
+the responses. Devel::GDB was designed to provide good base for
 both interactive and automatic scripts.
 
 =over 2
@@ -37,11 +36,11 @@ both interactive and automatic scripts.
 
 =over 4
 
-use Devel::GDB ; 
+use Devel::GDB ;
 
-our $gdb = new Devel::GDB (-execfile => 'gdb') ; 
+our $gdb = new Devel::GDB (-execfile => 'gdb') ;
 
-my $arch   = $gdb -> get ( 'info arch'  ) ; 
+my $arch   = $gdb -> get ( 'info arch'  ) ;
 
 my $endian = $gdb -> get ( 'show endian' ) ;
 
@@ -53,7 +52,7 @@ print $arch, $endian ;
 
 =head1 METHODS
 
-The three methods for normal gdb usage are: 'new', 'get' and 'signal'. 
+The three methods for normal gdb usage are: 'new', 'get' and 'signal'.
 
 =over 4
 
@@ -67,38 +66,38 @@ B<Options:>
 
 =over 2
 
-=item -file 
+=item -file
 
-File to open (like 'a.out'). No default. This is an easy way to load 
+File to open (like 'a.out'). No default. This is an easy way to load
 target file during initialization.
 
 =item -execfile
 
-File or command to execute as gdb process. Default is 'gdb'. 
+File or command to execute as gdb process. Default is 'gdb'.
 
 =item -params
 
 Parameters to the 'execfile'. Default is " -q -nx -nw ".
-Parameters can be also set as part of the 'execfile' string. 
+Parameters can be also set as part of the 'execfile' string.
 
-=item -timeout 
+=item -timeout
 
-Default timeout for B<get> method. Default is 9999 ; 
+Default timeout for B<get> method. Default is 9999 ;
 
 =item -prompt
 
-Default prompt for B<get> method (to identify end of gdb response). 
+Default prompt for B<get> method (to identify end of gdb response).
 Default is qr/\(s?gdb.*\)|^\s*\>|(y or n)/s.
 
 =item -notyet
 
-Default code to be used at the B<get> method while waiting for gdb response. 
+Default code to be used at the B<get> method while waiting for gdb response.
 
 =item -alldone
 
-Default code to be used at the B<get> method after waiting for gdb response. 
+Default code to be used at the B<get> method after waiting for gdb response.
 
-=back 
+=back
 
 The (actually internal) method B<new_shell> can be used to open and manipulate
  any kind of flushing && prompting process. Unlike B<new>, it would not set
@@ -108,43 +107,43 @@ The (actually internal) method B<new_shell> can be used to open and manipulate
 
 =item $gdb -> get ( ?command?, ?timeout?, ?prompt?, ?notyet?, ?alldone? )
 
-Send command to gdb and return response. 
-In array contest, return response, error, and matching prompt. 
-In scalar contest, return response only ('' if error). 
+Send command to gdb and return response.
+In array contest, return response, error, and matching prompt.
+In scalar contest, return response only ('' if error).
 
-B<Parameters:> 
+B<Parameters:>
 
 =over 2
 
 =item command
 
 Command to be sent to gdb. If undef or white-spaces, gdb buffers will be cleared
- and returned (timeouted old responses?). 
+ and returned (timeouted old responses?).
 
-=item timeout 
+=item timeout
 
-Limit the waiting time for gdb (integer seconds). If timeout expires, get returns 
-without interrupting the gdb process (use B<signal> for that). 
+Limit the waiting time for gdb (integer seconds). If timeout expires, get returns
+without interrupting the gdb process (use B<signal> for that).
 The default timeout (9999) can be overwritten in B<new>.
 
-=item prompt 
+=item prompt
 
-Expected regexpr prompt at the end of gdb response. 
+Expected regexpr prompt at the end of gdb response.
 The default prompt (qr/\(s?gdb.*\)|^\s*\>|(y or n)/s) can be overwritten in B<new>.
 
 =item notyet
 
 Code to be executed every second while waiting for response. Only valid code will be
- executed (i.e. ref $code eq 'CODE'). If this code returns true, B<get> would stop 
+ executed (i.e. ref $code eq 'CODE'). If this code returns true, B<get> would stop
 waiting to gdb response. Then B<signal> can be used to interrupt gdb process.
 Default notyet code can be set in B<new>.
 
 =item alldone
 
-Code to be executed when done. Only valid code will be executed. 
-Default alldone code can be set in B<new>. 
+Code to be executed when done. Only valid code will be executed.
+Default alldone code can be set in B<new>.
 
-=back 
+=back
 
 =head2 signal
 
@@ -167,7 +166,7 @@ B<IPC::Open3>
 
 
 
-package Devel::GDB ; 
+package Devel::GDB ;
 
 use strict ;
 # use warnings ;
@@ -178,31 +177,32 @@ use integer ;
 use FileHandle ;
 use IPC::Open3 ;
 
-use vars qw/$VERSION/; 
+use vars qw/$VERSION/;
 
-$VERSION = 1.22 ; 
+$VERSION = 1.23 ;
 
-sub new { 
+sub new {
 #  ------------------------------------------------------------------
-#  call new_shell and proper initializes  gdb. 
+#  call new_shell and proper initializes  gdb.
 #  ------------------------------------------------------------------
 
-    my $class = shift or 
-        die "Internal: Hey! this is a structured module, do not mess it" ;
+    my $class = shift or die "Who Am I? \n usage: Devel::GDB->new(....)" ;
 
-    my %sgdb = map /^-?(.*)$/o, map $_ || '', @_ ;
+    my %sgdb = map { ref $_ ? $_ : $_ ? /^-?(.*)$/o : ''} @_ ;
 
-    $sgdb{'execfile' } ||= 'gdb' ; 
+    $sgdb{'execfile' } ||= 'gdb' ;
     $sgdb{'params'   } ||= " -q -nx -nw " ;
-    $sgdb{'timeout'  } ||=  9999 ; 
-    $sgdb{'prompt'   } ||= eval {qr/\(s?gdb.*\)|^\s*\>|(y or n)/s} || '/\(s?gdb.*\)|^\s*\>|(y or n)' ;
-                          # is this perl version support qr//  ? 
+    $sgdb{'timeout'  } ||=  9999 ;
+    my $PROMPT = '\(s?gdb.*\)|(?:^|\n)\s*\>|\(y or n\)' ;
+    $sgdb{'prompt'   } ||= eval "qr/$PROMPT/" ;
+    $sgdb{'prompt'   } ||= $PROMPT ;
+    # does $^X support qr//  ?
 
     my $s = $class -> new_shell (%sgdb) ;
 
     my ($buf, $err, @buffers, @errors) ;
 
-    $_ = $s -> get ()  ; 
+    $_ = $s -> get ()  ;
 
     my @initial_cmds = ("set confirm off",
                         "set height 0",
@@ -234,12 +234,12 @@ sub new_shell {
 #  this function returns object associated with a piped system command.
 #  ------------------------------------------------------------------
 
-    my $class = shift or 
+    my $class = shift or
         die "Internal: Hey! this is a structured module, do not mess it" ;
 
     $class = ref $class if ref $class ;
 
-    my %sgdb = map /^-?(.*)$/o, @_ ;
+    my %sgdb = map { ref $_ ? $_ : /^-?(.*)$/o} @_ ;
 
     die "Internal: no command name" unless exists $sgdb{ 'execfile' } ;
 
@@ -249,7 +249,7 @@ sub new_shell {
 #    my ($IN, $OUT, $ERR) = (new FileHandle, new FileHandle, new FileHandle) ;
 
     # on second thought, I prefer errors to be displayed as normal response
-    # should I allow the former by switch? 
+    # should I allow the former by switch?
     my ($IN, $OUT, $ERR) = ( new FileHandle, (new FileHandle) x 2) ;
 
     $sgdb{'PID'} = open3($IN, $OUT, $ERR, $gdbcmd) or die "new: open3 cannot fork\n" ;
@@ -259,46 +259,43 @@ sub new_shell {
     bless \%sgdb, $class ;
 }
 
-sub get { 
+sub get {
 
 #  ------------------------------------------------------------------
 #  this function send command and return response for Devel::GDB object
 #  ------------------------------------------------------------------
 
     # get params:
-    #      self                      : this (initialized) object 
+    #      self                      : this (initialized) object
     #      command  |''              : if !/\S/ just get_stream (clear buffer)
-    #      timeout  |$self->{timeout}: wait limit (integer seconds), 
-    #      expect_re|$self->{prompt} : wait for this re, 
+    #      timeout  |$self->{timeout}: wait limit (integer seconds),
+    #      expect_re|$self->{prompt} : wait for this re,
     #      wait_sub |$self->{notyet} : sub executed every second while waiting
     #      done_sub |$self->{alldone}: sub executed when finished
-    # 
+    #
 
     my $self = shift or die "Internal: Hey! this is a structured module, do not mess it" ;
 
     my $cmd  = shift || '' ;
                                             # single newline at the end
-    $cmd =~ s/ \s*$/ \n/ or $cmd =~ s/\s*$/\n/; 
+    $cmd =~ s/ \s*$/ \n/ or $cmd =~ s/\s*$/\n/;
 
     my ($IN, $OUT, $ERR, $PID) = @{$self}{ qw/IN OUT ERR PID/ } ;
 
     # TODO semaphore?
     # how about $self -> {semaphore}( up ) if $self->{semaphore} ?
 
-    if ($cmd !~ /\S/) {                     # let empty command be 'clean buffers'
+    if ($cmd !~ /\S/) {    # let empty command be 'clean buffers'
 
-        return (scalar (get_stream($OUT, 0.01, 10_000)), 
-                scalar (get_stream($ERR, 0.01, 10_000)),
-                "(clear) " ) if wantarray ;
-        return (scalar (get_stream($OUT, 0.01, 10_000)) .
-                scalar (get_stream($ERR, 0.01, 10_000)) ) ;
-                
+        return ( $self -> get_stream ( 0.01, 10_000),
+                 "(clear) " ) if wantarray ;
+        return ( scalar ( $self -> get_stream ( 0.01, 10_000)) ) ;
     }
-    if ( my $leftover = get_stream( $OUT, 0.01, 10_000) and $ENV{ 'SGDBTK_DEBUG' } ) {
+    if ( my $leftover = $self -> get_stream( 0.01, 10_000) ) {
 
-        print STDERR 'leftover: ',$leftover, "\n" if length $leftover > 10 ;
+        warn "leftover: $leftover\n" if length $leftover > 10 ;
     }
-    # first, send the command (gdb might start working by contest switch!) 
+    # first, send the command (gdb might start working by contest switch!)
     print $IN $cmd  ;
 
     # now, plenty of time to play with parameters
@@ -314,7 +311,7 @@ sub get {
     my $done    = shift || $self->{'alldone'} ;
     $done   = undef unless ref $done   eq 'CODE' ;
 
-    my ($buffer, $rmask, $nread, $buf, $err, $nfound, $rprompt)  = ('') ; 
+    my ($buffer, $rmask, $nread, $buf, $err, $nfound, $rprompt)  = ('') ;
                                             # now get the respond
   GETTING: while ( !$err ) {
 
@@ -325,7 +322,7 @@ sub get {
             ($nfound)  = select($rmask, undef, undef, 1) ;
             $nfound and last ;
 
-            if ( $notyet and $notyet->($timeout) ) { 
+            if ( $notyet and $notyet->($timeout) ) {
                 $err = 'STOPPED' ;
                 last ;
             }
@@ -333,7 +330,7 @@ sub get {
 
         if (!$nfound) {
             $err ||= 'TIMEOUT' ;
-            kill 0 => $PID ;
+            kill 0 => $PID if $PID;
             last ;
         }
 
@@ -346,7 +343,7 @@ sub get {
 
         $buffer .= $buf ;
 
-        if ($buffer =~ s/($prompt)\s*$// ) { 
+        if ($buffer =~ s/($prompt)\s*$// ) {
             $rprompt = $1 ;
             last GETTING ;
         }
@@ -354,7 +351,7 @@ sub get {
 
     $done and $done->() ;
 
-    return ( $buffer , 
+    return ( $buffer ,
             ($err || '') ,
             ($rprompt || '')) if wantarray() ;
 
@@ -363,18 +360,19 @@ sub get {
 }
 
 sub get_stream {
-    
+
     # ----------------------------------------------------------------
-    # get_stream: select and read limited available bytes from stream 
+    # get_stream: select and read limited available bytes from stream
     # ----------------------------------------------------------------
 
     no integer ;
     my $stream   = shift or die "Internal: no stream parameter";
-    ref $stream and ref ($stream) ne 'FileHandle' and  $stream = $stream->{'OUT'} ;
     my $timeout  = shift || 0.1 ;
     my $size     = shift || 10_000 ;
 
     my ($rmask, $buf, $err) = "" ;
+
+    ref $stream and ref ($stream) ne 'FileHandle' and  $stream = $stream->{'OUT'} ;
 
     vec($rmask, fileno( $stream ), 1) = 1;
 
@@ -388,8 +386,8 @@ sub get_stream {
         $err = "TIMEOUT" ;
     }
 
-    return ($buf || '', $err) if wantarray ; 
-    
+    return ($buf || '', $err) if wantarray ;
+
     return $buf || '' ;
 }
 
@@ -414,9 +412,9 @@ sub clear_stream {
 }
 
 sub get_errstream {
-    
+
     # ----------------------------------------------------------------
-    # get_errstream: same us get_stream, but it $stream is a 
+    # get_errstream: same us get_stream, but it $stream is a
     # class, read error stream
     # ----------------------------------------------------------------
 
@@ -426,9 +424,9 @@ sub get_errstream {
 }
 
 sub put_stream {
-    
+
     # ----------------------------------------------------------------
-    # put_stream: simple, print to stream. 
+    # put_stream: simple, print to stream.
     # ----------------------------------------------------------------
 
     my $stream = shift or die "Internal: no stream parameter" ;
@@ -446,30 +444,28 @@ sub signal {
     my $pid = shift ;
     ref $pid and $pid = $pid->{'PID'} ;
     my $sig  = shift || 0 ;
-    kill $sig => $pid ;
+    kill $sig => $pid if $pid ;
 }
 
-sub destroy {
-    
-    my $self = shift or return ;
+sub DESTROY {
 
-    my $pid = $self->{ 'PID' } ;
-    
-    kill ( 0, $pid ) and kill ( 9, $pid ) ;
+    my $self = shift or return warn 'whoami' ;
 
-    # Note: kill 0 normally does nothing (well, checks if pid is alive). 
+    my ($IN, $OUT, $ERR, $PID) = @{$self}{ qw/IN OUT ERR PID/ } ;
+
+    $PID->Kill (0) if ref $PID ;
+    kill 0 => $PID and kill 9 => $PID if $PID ;
+
+    # Note: kill 0 normally does nothing (well, checks if pross. is alive).
     # gdb use 'SIGHUP' (0) for quitting. both cases, the upper line
     # should work.
 
-    # Perlon: Shall I use -9 to kill all group or should I trust gdb to handle 
-    # it's subprocesses by itself? 
+    # Perlon: Shall I use -9 to kill all group or should I trust gdb to handle
+    # it's subprocesses by itself?
 
-    my $IN = $self -> { 'IN' } ;
+    for my $it ( $IN, $OUT, $ERR ) { eval { close $it } }
 
-    close $IN if ref $IN eq 'FileHandle' ;
-    
-    # Note: the next lines where taken from gdb code: 
-    
+# the next lines where copied from gdb code:
 #  static void
 #  init_signals ()
 #  {
@@ -503,9 +499,6 @@ sub destroy {
 
 }
 
-sub DESTROY { destroy @_ } 
-    
 'END';
-
 
 

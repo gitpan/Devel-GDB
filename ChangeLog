@@ -18,3 +18,6 @@ Revision history for Perl extension Devel::GDB.
 
 1.22  Sat Nov 24 14:00    2001 Srebrenko Sehic <haver@insecure.dk>
 	- example fix
+
+1.23  Fri Oct 22 14:00    2004 jezra <jezra@cpan.org>
+	- fixed regular expression to support gdb's "> " prompt

@@ -15,5 +15,5 @@ ok(1) ;                         # 2. made it so far? (new exists)
 
 ok(ref $gdb) ;                  # 3. returned a moudle? 
 
-ok(scalar $gdb->get('help')) ;  # 4. living process? 
+ok(scalar $gdb->get('help')) ;  # 4. gdb response? 
 
