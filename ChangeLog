@@ -12,3 +12,6 @@ Revision history for Perl extension Devel::GDB.
 
 1.2   Wed Oct 24 11:52    2001 jezra <jezra@emc.com>
 	- Makefile.PL fix
+
+1.21  Thu Nov 15 16:00    2001 jezra <jezra@emc.com> 	
+	- documentation ..

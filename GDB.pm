@@ -88,7 +88,7 @@ Default timeout for L<get> method. Default is 9999 ;
 =item -prompt
 
 Default prompt for L<get> method (to identify end of gdb response). 
-Deafult is qr/\(s?gdb.*\)|^\s*\>|(y or n)/s.
+Default is qr/\(s?gdb.*\)|^\s*\>|(y or n)/s.
 
 =item -notyet
 
@@ -178,7 +178,9 @@ use integer ;
 use FileHandle ;
 use IPC::Open3 ;
 
-our $VERSION = 1.2 ;
+use vars qw/$VERSION/; 
+
+$VERSION = 1.21 ; 
 
 sub new { 
 #  ------------------------------------------------------------------
@@ -268,7 +270,7 @@ sub get {
     #      command  |''              : if !/\S/ just get_stream (clear buffer)
     #      timeout  |$self->{timeout}: wait limit (integer seconds), 
     #      expect_re|$self->{prompt} : wait for this re, 
-    #      wait_sub |$self->{notyet} : sub executed every second while wating
+    #      wait_sub |$self->{notyet} : sub executed every second while waiting
     #      done_sub |$self->{alldone}: sub executed when finished
     # 
 
@@ -299,7 +301,7 @@ sub get {
     # first, send the command (gdb might start working by contest switch!) 
     print $IN $cmd  ;
 
-    # now, planty of time to play with parameters
+    # now, plenty of time to play with parameters
 
     my $timeout = shift || $self->{'timeout'} ;
     $timeout -= time if $timeout++ > 600_000_000 ;
@@ -324,7 +326,7 @@ sub get {
             $nfound and last ;
 
             if ( $notyet and $notyet->($timeout) ) { 
-                $err = 'STOPED' ;
+                $err = 'STOPPED' ;
                 last ;
             }
         }
@@ -356,7 +358,7 @@ sub get {
             ($err || '') ,
             ($rprompt || '')) if wantarray() ;
 
-    $self->{'last_Error'} = $err ;
+    $self->{'last_error'} = $err ;
     return $buffer ;
 }
 
@@ -455,8 +457,8 @@ sub destroy {
     
     kill ( 0, $pid ) and kill ( 9, $pid ) ;
 
-    # Note: kill 0 normaly does nothing (well, checks if pid is alive). 
-    # gdb use 'SIGHUP' (0) for quiting. both cases, the upper line
+    # Note: kill 0 normally does nothing (well, checks if pid is alive). 
+    # gdb use 'SIGHUP' (0) for quitting. both cases, the upper line
     # should work.
 
     # Perlon: Shall I use -9 to kill all group or should I trust gdb to handle 
