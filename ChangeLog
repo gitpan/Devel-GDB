@@ -15,3 +15,6 @@ Revision history for Perl extension Devel::GDB.
 
 1.21  Thu Nov 15 16:00    2001 jezra <jezra@emc.com> 	
 	- documentation ..
+
+1.22  Sat Nov 24 14:00    2001 Srebrenko Sehic <haver@insecure.dk>
+	- example fix

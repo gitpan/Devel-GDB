@@ -1,7 +1,7 @@
 ##################################################
 ##################################################
 ##						##
-##	Gdb - open and manipulate gdb process	##
+## Devel::GDB - open and manipulate gdb process	##
 ##						##
 ##	Josef Ezra     				##
 ##	EMC                                     ##
@@ -39,7 +39,7 @@ both interactive and automatic scripts.
 
 use Devel::GDB ; 
 
-our $gdb = new Devel::Gdb (-execfile => 'gdb') ; 
+our $gdb = new Devel::GDB (-execfile => 'gdb') ; 
 
 my $arch   = $gdb -> get ( 'info arch'  ) ; 
 
@@ -83,26 +83,26 @@ Parameters can be also set as part of the 'execfile' string.
 
 =item -timeout 
 
-Default timeout for L<get> method. Default is 9999 ; 
+Default timeout for B<get> method. Default is 9999 ; 
 
 =item -prompt
 
-Default prompt for L<get> method (to identify end of gdb response). 
+Default prompt for B<get> method (to identify end of gdb response). 
 Default is qr/\(s?gdb.*\)|^\s*\>|(y or n)/s.
 
 =item -notyet
 
-Default code to be used at the L<get> method while waiting for gdb response. 
+Default code to be used at the B<get> method while waiting for gdb response. 
 
 =item -alldone
 
-Default code to be used at the L<get> method after waiting for gdb response. 
+Default code to be used at the B<get> method after waiting for gdb response. 
 
 =back 
 
 The (actually internal) method B<new_shell> can be used to open and manipulate
  any kind of flushing && prompting process. Unlike B<new>, it would not set
- defaults or run initial commands. Have I mentioned B<flushing>??!!
+ defaults or run initial commands.
 
 =head2 get
 
@@ -124,25 +124,25 @@ Command to be sent to gdb. If undef or white-spaces, gdb buffers will be cleared
 =item timeout 
 
 Limit the waiting time for gdb (integer seconds). If timeout expires, get returns 
-without interrupting the gdb process (use L<signal> for that). 
-The default timeout (9999) can be overwritten in L<new>.
+without interrupting the gdb process (use B<signal> for that). 
+The default timeout (9999) can be overwritten in B<new>.
 
 =item prompt 
 
 Expected regexpr prompt at the end of gdb response. 
-The default prompt (qr/\(s?gdb.*\)|^\s*\>|(y or n)/s) can be overwritten in L<new>.
+The default prompt (qr/\(s?gdb.*\)|^\s*\>|(y or n)/s) can be overwritten in B<new>.
 
 =item notyet
 
 Code to be executed every second while waiting for response. Only valid code will be
  executed (i.e. ref $code eq 'CODE'). If this code returns true, B<get> would stop 
-waiting to gdb response. Then L<signal> can be used to interrupt gdb process.
-Default notyet code can be set in L<new>.
+waiting to gdb response. Then B<signal> can be used to interrupt gdb process.
+Default notyet code can be set in B<new>.
 
 =item alldone
 
 Code to be executed when done. Only valid code will be executed. 
-Default alldone code can be set in L<new>. 
+Default alldone code can be set in B<new>. 
 
 =back 
 
@@ -180,7 +180,7 @@ use IPC::Open3 ;
 
 use vars qw/$VERSION/; 
 
-$VERSION = 1.21 ; 
+$VERSION = 1.22 ; 
 
 sub new { 
 #  ------------------------------------------------------------------
