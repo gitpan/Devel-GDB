@@ -3,9 +3,6 @@
 ##						##
 ##	Gdb - open and manipulate gdb process	##
 ##						##
-##	Version 1.1				##
-##						##
-##						##
 ##	Josef Ezra     				##
 ##	EMC                                     ##
 ##	jezra@emc.com           		##
@@ -17,7 +14,7 @@
 
 =head1 NAME
 
-    Devel::GDB - open and communicate a gdb session, Version 1.1
+    Devel::GDB - open and communicate a gdb session
 
 =head1 SYNOPSIS
 
@@ -181,7 +178,7 @@ use integer ;
 use FileHandle ;
 use IPC::Open3 ;
 
-our $VERSION = 1.1 ; 
+our $VERSION = 1.2 ;
 
 sub new { 
 #  ------------------------------------------------------------------
