@@ -1,18 +1,13 @@
+Devel-GDB version 2.0
+=====================
 
+The Devel::GDB package provides an interface for communicating with GDB,
+the GNU debugger.  Complete documentation is available on the CPAN site:
 
-Devel/GDB version 1.22
-======================
-
-Devel::GDB - open and communicate a gdb session 
-
-use Devel::GDB ;
-
-$gdb  = new Devel::GDB () ;
-
-$gdb_help = $gdb -> get ( 'help' ) ; 
-$gdb_vers = $gdb -> get ( 'show version' ) ; 
+http://search.cpan.org/~JEZRA/Devel-GDB/GDB.pm
 
 INSTALLATION
+------------
 
 To install this module type the following:
 
@@ -21,33 +16,29 @@ To install this module type the following:
    make test
    make install
 
+DEPENDENCIES
+------------
 
+This module requires these other modules and libraries, which should be
+part of most standard Perl instalations:
 
+  Test::More
+  threads::shared
+  Thread::Semaphore
+
+The following modules are also recommended:
+
+  threads (i.e. Perl compiled with -Dusethreads)
+  Expect
+  IO::BufferedSelect
+
+In addition, for the module to be useful, you should have gdb installed :-)
 
 COPYRIGHT AND LICENSE
+---------------------
 
-Copyright (C) 2001 EMC Corporation.  All rights reserved.
+Copyright (C) 2007 by Antal Novak & Josef Ezra
 
-Bundled Distributions
-This work may be distributed only under the terms of 
-Perl's Artistic License. Any distribution of this file 
-or derivatives thereof outside of it's original package
-require that special arrangements be made with copyright
-holder. 
-
-Irrespective of its distribution, all code examples in
-these files are hereby placed into the public domain. You
-are permitted and encouraged to use this code in your own 
-programs for fun or for profit as you see fit. A simple 
-comment in the code giving credit would be courteous but 
-is not required. 
-
-Disclaimer
-This information is offered in good faith and in the hope 
-that it may be of use, but is not guaranteed to be correct, 
-up to date, or suitable for any particular purpose whatsoever. 
-The authors accept no liability in respect of this information 
-or its use. 
-
-
-
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.8.8 or,
+at your option, any later version of Perl 5 you may have available.
