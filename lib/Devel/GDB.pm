@@ -56,7 +56,7 @@ output sent to the console stream.
 
 =cut
 
-our $VERSION = '2.0';
+our $VERSION = '2.01';
 our $DEBUG;
 our $DEPRECATED;
 
@@ -583,33 +583,30 @@ sub _escape
     return $qstring;
 }
 
-my %unesc =
-(
-  a => "\a",
-  b => "\b",
-  t => "\t",
-  n => "\n",
-  f => "\f",
-  r => "\r",
-  e => "\e",
-  v => "\013",
-);
+my %unesc = (  "\\" => "\\",
+               "\"" => "\"",
+               "a"  => "\a",
+               "b"  => "\b",
+               "t"  => "\t",
+               "n"  => "\n",
+               "f"  => "\f",
+               "r"  => "\r",
+               "e"  => "\e",
+               "v"  => "\013",
+            );
 
 sub _unescape
 {
-    # Looks like we have to do this one ourselves
-    my ($string) = @_;
+   # Looks like we have to do this one ourselves
+   my ($string) = @_;
 
-    # Unescape any \X for various characters X
-    $string =~ s/\\([abtnfre])/$unesc{$1}/esg;
+   # Unescape any \X for various characters X (including \\ and \")
+   $string =~ s/\\([\\\"abtnfrev])/$unesc{$1} || "\\$1"/esg;
 
-    # Unescape \OCTAL for various octal values
-    $string =~ s/\\(0[0-7]+)/chr(oct($1))/esg;
+   # Unescape \OCTAL for various octal values
+   $string =~ s/\\(0[0-7]+)/chr(oct($1))/esg;
 
-    # Finally, unescape \" and \\
-    $string =~ s/\\([\\\"])/$1/sg;
-
-    return $string;
+   return $string;
 }
 
 sub _generate_token
