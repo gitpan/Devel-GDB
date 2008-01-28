@@ -56,7 +56,7 @@ output sent to the console stream.
 
 =cut
 
-our $VERSION = '2.01';
+our $VERSION = '2.02';
 our $DEBUG;
 our $DEPRECATED;
 

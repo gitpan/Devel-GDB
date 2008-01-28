@@ -3,9 +3,6 @@ use Test::More ;
 qx/gdb -v/ or
   plan skip_all => "cannot execute 'gdb', please use -execfile => '/full/path/to/gdb' ";
 
-qx/tr --version/ or
-  plan skip_all => "cannot execute 'tr'";
-
 eval "use Expect; 1" or
   plan skip_all => "cannot use 'Expect'" ;
 
@@ -19,17 +16,18 @@ ok($gdb);
 my $e = $gdb->get_expect_obj;
 ok($e);
 
-ok($gdb->send_cmd("file tr"));
-ok($gdb->send_cmd("set args a-zA-Z A-Za-z"));
+ok($gdb->send_cmd("file $^X"));
+ok($gdb->send_cmd("set args -p -e '\$_ = uc'"));
 ok($gdb->send_cmd("-exec-run"));
 
-$e->send("one TWO\n");
-$e->send("ONE two\n");
+$e->send("foo\n");
 
 ok($e->expect(undef, '-re', '^.+$')
-    and $e->match =~ /^ONE two/);
+    and $e->match =~ /^FOO/);
+
+$e->send("bar\n");
 
 ok($e->expect(undef, '-re', '^.+$')
-    and $e->match =~ /^one TWO/);
+    and $e->match =~ /^BAR/);
 
 $gdb->end;

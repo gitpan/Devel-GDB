@@ -36,3 +36,7 @@ Revision history for Perl extension Devel::GDB.
 
 2.01  Sun Jan 20 13:32   2008 Geert De Peuter <varia@depeuter.org>
 	- bug fix in _unescape function
+
+2.02 Mon Jan 28 16:22:38 2008 Josef Ezra <jezra@cpan.org>
+        - fixed t/expect.t example after it failed on darwin 8.10.1
+
